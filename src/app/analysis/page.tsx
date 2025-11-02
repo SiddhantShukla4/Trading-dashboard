@@ -14,6 +14,14 @@ import { format } from "date-fns";
 
 type EquityPoint = { t: number; equity: number };
 
+function formatCurrency(n: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 2,
+  }).format(n);
+}
+
 export default function AnalysisPage() {
   const [data, setData] = useState<EquityPoint[]>([]);
 
@@ -45,7 +53,7 @@ export default function AnalysisPage() {
             Current Equity
           </div>
           <div className="text-2xl font-semibold">
-            {last ? last.equity.toFixed(2) : "-"}
+            {last ? formatCurrency(last.equity) : "-"}
           </div>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -53,7 +61,7 @@ export default function AnalysisPage() {
             Start Equity
           </div>
           <div className="text-2xl font-semibold">
-            {start ? start.equity.toFixed(2) : "-"}
+            {start ? formatCurrency(start.equity) : "-"}
           </div>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -88,7 +96,7 @@ export default function AnalysisPage() {
               <YAxis domain={["auto", "auto"]} />
               <Tooltip
                 labelFormatter={(v) => format(new Date(Number(v)), "HH:mm:ss")}
-                formatter={(value) => [Number(value).toFixed(2), "Equity"]}
+                formatter={(value) => [formatCurrency(Number(value)), "Equity"]}
               />
               <Line
                 type="monotone"

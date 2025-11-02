@@ -54,15 +54,32 @@ function usePortfolioStream() {
       return () => ws.close();
     }
 
-    // Fallback: poll mock API if WS not configured
+    // Poll API for real-time updates (faster polling for live data)
     let id: number | undefined;
     const poll = async () => {
       try {
-        const res = await fetch("/api/portfolio");
+        const res = await fetch("/api/portfolio", { 
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        });
         const data = await res.json();
-        updateFromTick(data);
-      } catch {}
-      id = window.setTimeout(poll, 2000);
+        if (!data.error) {
+          updateFromTick(data);
+          // Log source for debugging
+          if (data.source === "mock") {
+            console.warn("⚠️ Using mock data. Check .env.local file and server logs.");
+          } else if (data.source === "dhan") {
+            console.log("✅ Real Dhan data loaded");
+          }
+        } else {
+          console.error("API error:", data.error);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+      id = window.setTimeout(poll, 1000); // Poll every 1 second for real-time feel
     };
     poll();
     return () => {
@@ -72,7 +89,12 @@ function usePortfolioStream() {
 }
 
 function formatCurrency(n: number) {
-  return new Intl.NumberFormat(undefined, { style: "currency", currency: "USD" }).format(n);
+  // Format as INR (Indian Rupees) for Dhan account
+  return new Intl.NumberFormat("en-IN", { 
+    style: "currency", 
+    currency: "INR",
+    maximumFractionDigits: 2,
+  }).format(n);
 }
 
 export default function PortfolioPage() {
