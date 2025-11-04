@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Try multiple endpoint variations
     const endpoints = [
       `${DHAN_API_BASE}/v2/quote/${symbol}`,
       `${DHAN_API_BASE}/quote/${symbol}`,
@@ -44,7 +43,6 @@ export async function GET(request: NextRequest) {
           });
         }
       } catch {
-        // Try next endpoint
         continue;
       }
     }

@@ -49,7 +49,6 @@ function usePortfolioStream() {
         } catch {}
       };
       ws.onerror = () => {
-        // no-op
       };
       return () => ws.close();
     }
@@ -69,9 +68,9 @@ function usePortfolioStream() {
           updateFromTick(data);
           // Log source for debugging
           if (data.source === "mock") {
-            console.warn("⚠️ Using mock data. Check .env.local file and server logs.");
+            console.warn("Using mock data. Check .env.local file and server logs.");
           } else if (data.source === "dhan") {
-            console.log("✅ Real Dhan data loaded");
+            console.log("Real Dhan data loaded");
           }
         } else {
           console.error("API error:", data.error);
@@ -79,7 +78,7 @@ function usePortfolioStream() {
       } catch (err) {
         console.error("Fetch error:", err);
       }
-      id = window.setTimeout(poll, 1000); // Poll every 1 second for real-time feel
+      id = window.setTimeout(poll, 1000); 
     };
     poll();
     return () => {
@@ -89,7 +88,6 @@ function usePortfolioStream() {
 }
 
 function formatCurrency(n: number) {
-  // Format as INR (Indian Rupees) for Dhan account
   return new Intl.NumberFormat("en-IN", { 
     style: "currency", 
     currency: "INR",
