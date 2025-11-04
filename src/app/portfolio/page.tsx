@@ -53,7 +53,6 @@ function usePortfolioStream() {
       return () => ws.close();
     }
 
-    // Poll API for real-time updates (faster polling for live data)
     let id: number | undefined;
     const poll = async () => {
       try {
@@ -66,7 +65,6 @@ function usePortfolioStream() {
         const data = await res.json();
         if (!data.error) {
           updateFromTick(data);
-          // Log source for debugging
           if (data.source === "mock") {
             console.warn("Using mock data. Check .env.local file and server logs.");
           } else if (data.source === "dhan") {
@@ -78,7 +76,7 @@ function usePortfolioStream() {
       } catch (err) {
         console.error("Fetch error:", err);
       }
-      id = window.setTimeout(poll, 1000); 
+      id = window.setTimeout(poll, 5000); 
     };
     poll();
     return () => {
